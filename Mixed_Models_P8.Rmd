@@ -19,23 +19,21 @@ update.packages()
 
 ## Lecture 1 excercises
 
-1. Familiarize yourself documentation of the ToothGrowth data. In the following focus on tooth data
-because it is a much smaller dataset.
+1.  Familiarize yourself documentation of the ToothGrowth data. In the following focus on tooth data because it is a much smaller dataset.
 
+2.  What does the interaction_plot() function do? How do you interpret the graph? The interaction_plot() plots the mean of the response for two-way combinations of factors, thereby illustrating possible interactions.
 
-2. What does the interaction_plot() function do? How do you interpret the graph?
-The interaction_plot() plots the mean of the response for two-way combinations of factors, thereby illustrating possible interactions.
+3.  The response variable is len. There are several obvious models to consider
 
+<!-- -->
 
-3. The response variable is len. There are several obvious models to consider
+a.  len depends on dose and supp additively (i.e. no interaction). Also called a main effects model.
+b.  len depends on dose and supp with interaction. Also called an interaction model.
+c.  len depends on dosef and supp additivly (i.e. no interaction).
+d.  len depends on dosef and supp with interaction
 
-  a. len depends on dose and supp additively (i.e. no interaction). Also called a main effects model.
-  b. len depends on dose and supp with interaction. Also called an interaction model.
-  c. len depends on dosef and supp additivly (i.e. no interaction).
-  d. len depends on dosef and supp with interaction
+<!-- -->
 
+4.  For each model, make sure you can interpret the parameters. Focus in particular on understanding the difference between a main effects model and an interaction model.
 
-4. For each model, make sure you can interpret the parameters. Focus in particular on understanding the difference between a main effects model and an interaction model.
-
-5. Find the model matrix and regression coefficients for each of these models. Based on these quantities, compute the fitted values for each model. Plot the fitted values against dose along the lines shown
-above.
+5.  Find the model matrix and regression coefficients for each of these models. Based on these quantities, compute the fitted values for each model. Plot the fitted values against dose along the lines shown above.
