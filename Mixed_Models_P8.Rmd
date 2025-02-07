@@ -6,6 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+#remotes::install_github("hojsgaard/doBy")
 library(caracas)
 library(cowplot)
 library(doBy)
@@ -14,26 +15,104 @@ library(knitr)
 library(Matrix)
 library(tidyr)
 library(broom)
-update.packages()
 ```
 
 ## Lecture 1 excercises
+```{r setup, include=T}
+ToothGrowth |> ggplot(aes(x=dose, y=len, color=supp)) + geom_point()
 
-1.  Familiarize yourself documentation of the ToothGrowth data. In the following focus on tooth data because it is a much smaller dataset.
+ToothGrowth |> interaction_plot(len~dose+supp)
+
+i <- sapply(10*(0:5), function(i) i+(1:3))
+tooth <- ToothGrowth[i,]
+tooth$dosef <- as.factor(tooth$dose)
+``` 
 
 2.  What does the interaction_plot() function do? How do you interpret the graph? The interaction_plot() plots the mean of the response for two-way combinations of factors, thereby illustrating possible interactions.
 
+  The interaction_plot() function plots the mean of the length of the tooth. Here one see the mean
+  leanth of the tooth give supplement VC or OJ. As the dose increases both the length of the tooth
+  for O ad VC increases. 
+
 3.  The response variable is len. There are several obvious models to consider
 
-<!-- -->
-
-a.  len depends on dose and supp additively (i.e. no interaction). Also called a main effects model.
+a.  len depends on dose and supp additively (i.e. no interaction). Also called a main effects        model.
+This assumes that dose and supp each have a linear effect on len, but they do not interact:
+```{r setup, include=F}
+model_a <- lm(len ~ dose + supp, data = ToothGrowth)
+```
+  
 b.  len depends on dose and supp with interaction. Also called an interaction model.
+allows the effect of dose to vary depending on the supplement.
+```{r setup, include=F}
+model_b <- lm(len ~ dose * supp, data = ToothGrowth)
+```
+
+
 c.  len depends on dosef and supp additivly (i.e. no interaction).
+Here, dosef is a factor, meaning each dose level is treated as a separate category (instead of assuming a linear relationship).
+```{r setup, include=F}
+model_c <- lm(len ~ dosef + supp, data = tooth)
+```
+
 d.  len depends on dosef and supp with interaction
+This allows for different effects of dose for each supplement type.
+```{r setup, include=F}
+model_d <- lm(len ~ dosef * supp, data = tooth)
+```
 
-<!-- -->
+For each model, make sure you can interpret the parameters. Focus in particular on understanding the difference between a main effects model and an interaction model.
 
-4.  For each model, make sure you can interpret the parameters. Focus in particular on understanding the difference between a main effects model and an interaction model.
+A main effect model is where the explanatory variable affects respinse variable independently whereas the interactio model says the effect of X_1 depends on X_2
 
-5.  Find the model matrix and regression coefficients for each of these models. Based on these quantities, compute the fitted values for each model. Plot the fitted values against dose along the lines shown above.
+4.  Find the model matrix and regression coefficients for each of these models. Based on these quantities, compute the fitted values for each model. Plot the fitted values against dose along the lines shown above.
+
+```{r setup, include=T}
+# Convert dose to factor for models (c) and (d)
+ToothGrowth$dosef <- as.factor(ToothGrowth$dose)
+
+# Fit the four models
+model_a <- lm(len ~ dose + supp, data = ToothGrowth)
+model_b <- lm(len ~ dose * supp, data = ToothGrowth)
+model_c <- lm(len ~ dosef + supp, data = ToothGrowth)
+model_d <- lm(len ~ dosef * supp, data = ToothGrowth)
+# Get model matrices
+X_a <- model.matrix(model_a)
+X_b <- model.matrix(model_b)
+X_c <- model.matrix(model_c)
+X_d <- model.matrix(model_d)
+
+# Get regression coefficients
+beta_a <- coef(model_a)
+beta_b <- coef(model_b)
+beta_c <- coef(model_c)
+beta_d <- coef(model_d)
+
+# Compute fitted values
+fitted_a <- X_a %*% beta_a
+fitted_b <- X_b %*% beta_b
+fitted_c <- X_c %*% beta_c
+fitted_d <- X_d %*% beta_d
+
+# Add fitted values to the dataset
+ToothGrowth$fitted_a <- fitted_a
+ToothGrowth$fitted_b <- fitted_b
+ToothGrowth$fitted_c <- fitted_c
+ToothGrowth$fitted_d <- fitted_d
+
+# Base ggplot function for easy reuse
+plot_fitted <- function(fitted_values, model_name) {
+  ggplot(ToothGrowth, aes(x = dose, color = supp)) +
+    geom_point(aes(y = len), alpha = 0.5) +  # Observed data
+    geom_line(aes(y = fitted_values), linetype = "solid", linewidth = 1) +
+    labs(y = "Fitted Values", title = paste("Fitted Values for", model_name)) +
+    theme_minimal()
+}
+
+# Create individual plots
+plot_fitted(ToothGrowth$fitted_a, "Model (a): len ~ dose + supp")
+plot_fitted(ToothGrowth$fitted_b, "Model (b): len ~ dose * supp")
+plot_fitted(ToothGrowth$fitted_c, "Model (c): len ~ dosef + supp")
+plot_fitted(ToothGrowth$fitted_d, "Model (d): len ~ dosef * supp")
+
+```
