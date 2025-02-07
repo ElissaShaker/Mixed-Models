@@ -5,7 +5,7 @@ date: "2025-02-03"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 #remotes::install_github("hojsgaard/doBy")
 library(caracas)
 library(cowplot)
@@ -18,7 +18,7 @@ library(broom)
 ```
 
 ## Lecture 1 excercises
-```{r setup, include=T}
+```{r, include=T}
 ToothGrowth |> ggplot(aes(x=dose, y=len, color=supp)) + geom_point()
 
 ToothGrowth |> interaction_plot(len~dose+supp)
@@ -38,26 +38,26 @@ tooth$dosef <- as.factor(tooth$dose)
 
 a.  len depends on dose and supp additively (i.e. no interaction). Also called a main effects        model.
 This assumes that dose and supp each have a linear effect on len, but they do not interact:
-```{r setup, include=F}
+```{r, include=F}
 model_a <- lm(len ~ dose + supp, data = ToothGrowth)
 ```
   
 b.  len depends on dose and supp with interaction. Also called an interaction model.
 allows the effect of dose to vary depending on the supplement.
-```{r setup, include=F}
+```{r, include=F}
 model_b <- lm(len ~ dose * supp, data = ToothGrowth)
 ```
 
 
 c.  len depends on dosef and supp additivly (i.e. no interaction).
 Here, dosef is a factor, meaning each dose level is treated as a separate category (instead of assuming a linear relationship).
-```{r setup, include=F}
+```{r, include=F}
 model_c <- lm(len ~ dosef + supp, data = tooth)
 ```
 
 d.  len depends on dosef and supp with interaction
 This allows for different effects of dose for each supplement type.
-```{r setup, include=F}
+```{r, include=F}
 model_d <- lm(len ~ dosef * supp, data = tooth)
 ```
 
@@ -67,7 +67,7 @@ A main effect model is where the explanatory variable affects respinse variable 
 
 4.  Find the model matrix and regression coefficients for each of these models. Based on these quantities, compute the fitted values for each model. Plot the fitted values against dose along the lines shown above.
 
-```{r setup, include=T}
+```{r, include=T}
 # Convert dose to factor for models (c) and (d)
 ToothGrowth$dosef <- as.factor(ToothGrowth$dose)
 
@@ -116,3 +116,5 @@ plot_fitted(ToothGrowth$fitted_c, "Model (c): len ~ dosef + supp")
 plot_fitted(ToothGrowth$fitted_d, "Model (d): len ~ dosef * supp")
 
 ```
+
+## Lecture 2
